@@ -103,6 +103,9 @@ make ; %{parser} steps.tex > recipe.sh ; popd
 pushd docs/recipes/install/rocky9/x86_64/xcat/slurm
 make ; %{parser} steps.tex > recipe.sh ; popd
 
+pushd docs/recipes/install/rocky9/x86_64/confluent/slurm
+make ; %{parser} steps.tex > recipe.sh ; popd
+
 pushd docs/recipes/install/rocky9/x86_64/xcat_stateful/slurm
 make ; %{parser} steps.tex > recipe.sh ; popd
 
