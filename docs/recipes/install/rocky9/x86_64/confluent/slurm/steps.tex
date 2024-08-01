@@ -1,0 +1,150 @@
+\documentclass[letterpaper]{article}
+\usepackage{common/ohpc-doc}
+\setcounter{secnumdepth}{5}
+\setcounter{tocdepth}{5}
+
+% Include git variables
+\input{vc.tex}
+
+% Define Base OS and other local macros
+\newcommand{\baseOS}{Rocky 9.4}
+\newcommand{\OSRepo}{Rocky\_9.4}
+\newcommand{\OSTree}{EL\_9}
+\newcommand{\OSTag}{el9}
+\newcommand{\baseos}{rocky9.4}
+\newcommand{\baseosshort}{rocky9}
+\newcommand{\provisioner}{confluent}
+\newcommand{\provheader}{\provisioner{}}
+\newcommand{\rms}{SLURM}
+\newcommand{\rmsshort}{slurm}
+\newcommand{\arch}{x86\_64}
+
+% Define package manager commands
+\newcommand{\pkgmgr}{dnf}
+\newcommand{\addrepo}{wget -P /etc/yum.repos.d}
+\newcommand{\chrootaddrepo}{wget -P \$CHROOT/etc/yum.repos.d}
+\newcommand{\clean}{dnf clean expire-cache}
+\newcommand{\chrootclean}{dnf --installroot=\$CHROOT clean expire-cache}
+\newcommand{\install}{dnf -y install}
+\newcommand{\chrootinstall}{dnf -y --installroot=\$CHROOT install}
+\newcommand{\groupinstall}{dnf -y groupinstall}
+\newcommand{\groupchrootinstall}{dnf -y --installroot=\$CHROOT groupinstall}
+\newcommand{\remove}{dnf -y remove}
+\newcommand{\upgrade}{dnf -y upgrade}
+\newcommand{\chrootupgrade}{dnf -y --installroot=\$CHROOT upgrade}
+\newcommand{\tftppkg}{syslinux-tftpboot}
+\newcommand{\beegfsrepo}{https://www.beegfs.io/release/beegfs\_7.2.1/dists/beegfs-rhel8.repo}
+
+% boolean for os-specific formatting
+\toggletrue{isCentOS}
+\toggletrue{isCentOS_ww_slurm_x86}
+\toggletrue{isSLURM}
+\toggletrue{isx86}
+\toggletrue{isCentOS_x86}
+
+\begin{document}
+\graphicspath{{common/figures/}}
+\thispagestyle{empty}
+
+% Title Page
+\input{common/title}
+% Disclaimer
+\input{common/legal}
+
+\newpage
+\tableofcontents
+\newpage
+
+% Introduction  --------------------------------------------------
+
+\section{Introduction} \label{sec:introduction}
+\input{common/install_header}
+\input{common/intro} \\
+
+\input{common/base_edition/edition}
+\input{common/audience}
+\input{common/requirements}
+\input{common/inputs}
+
+
+
+% Base Operating System --------------------------------------------
+
+\section{Install Base Operating System (BOS)}
+\input{common/bos}
+
+%\clearpage
+% begin_ohpc_run
+% ohpc_validation_newline
+% ohpc_validation_comment Disable firewall
+\begin{lstlisting}[language=bash,keywords={}]
+[sms](*\#*) systemctl disable firewalld
+[sms](*\#*) systemctl stop firewalld
+\end{lstlisting}
+% end_ohpc_run
+
+% ------------------------------------------------------------------
+
+
+\subsection{Enable \Confluent{} repository for local use} \label{sec:enable_confluent}
+\input{common/enable_confluent_repo}
+
+
+\subsection{Add provisioning services on {\em master} node} \label{sec:add_provisioning}
+\input{common/install_provisioning_confluent_intro}
+
+
+\vspace*{-0.15cm}
+\subsection{Complete basic \Confluent{} setup for {\em master} node} \label{sec:setup_confluent}
+\input{common/confluent_setup}
+
+\subsection{Define {\em compute} image for provisioning}
+\input{common/confluent_init_os_images_rocky}
+
+\vspace*{0.9cm}
+\subsection{Add compute nodes into \Confluent{} database} \label{sec:confluent_add_nodes}
+\input{common/add_confluent_hosts_intro}
+
+%\vspace*{-0.25cm}
+\subsection{Boot compute nodes} \label{sec:boot_computes}
+\input{common/reset_computes_confluent}
+
+\section{Install \OHPC{} Components} \label{sec:basic_install}
+\input{common/install_ohpc_components_intro.tex}
+
+\subsection{Enable \OHPC{} repository for local use} \label{sec:enable_repo}
+\input{common/enable_ohpc_repo}
+
+% begin_ohpc_run
+% ohpc_validation_newline
+% ohpc_validation_comment Verify OpenHPC repository has been enabled before proceeding
+% ohpc_validation_newline
+% ohpc_command dnf repolist | grep -q OpenHPC
+% ohpc_command if [ $? -ne 0 ];then
+% ohpc_command    echo "Error: OpenHPC repository must be enabled locally"
+% ohpc_command    exit 1
+% ohpc_command fi
+% end_ohpc_run
+
+\input{common/rocky_repos}
+\input{common/automation}
+\input{common/time}
+
+%\input{common/enable_pxe}
+
+
+\subsection{Add resource management services on {\em master} node} \label{sec:add_rm}
+\input{common/install_slurm}
+
+\subsection{Optionally add \InfiniBand{} support services on {\em master} node} \label{sec:add_ofed}
+\input{common/ibsupport_sms_centos}
+
+\subsection{Optionally add \OmniPath{} support services on {\em master} node} \label{sec:add_opa}
+\input{common/opasupport_sms_centos}
+
+\vspace*{0.2cm}
+\subsubsection{Add \OHPC{} components} \label{sec:add_components}
+\input{common/add_to_compute_chroot_intro}
+
+    
+    
