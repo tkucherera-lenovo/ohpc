@@ -144,7 +144,147 @@
 
 \vspace*{0.2cm}
 \subsubsection{Add \OHPC{} components} \label{sec:add_components}
-\input{common/add_to_compute_chroot_intro}
+\input{common/add_to_compute_confluent_intro}
 
-    
+%\newpage
+% begin_ohpc_run
+% ohpc_validation_comment Add OpenHPC components to compute instance
+\begin{lstlisting}[language=bash,literate={-}{-}1,keywords={},upquote=true]
+# Add Slurm client support meta-package
+[sms](*\#*) (*\chrootinstall*) ohpc-slurm-client
+
+# Add Network Time Protocol (NTP) support
+[sms](*\#*) (*\chrootinstall*) ntp
+
+# Add kernel drivers
+[sms](*\#*) (*\chrootinstall*) kernel
+
+# Include modules user environment
+[sms](*\#*) (*\chrootinstall*)  --enablerepo=powertools lmod-ohpc
+\end{lstlisting}
+% end_ohpc_run
+
+% ohpc_comment_header Optionally add InfiniBand support services in compute node image \ref{sec:add_components}
+% ohpc_command if [[ ${enable_ib} -eq 1 ]];then
+% ohpc_indent 5
+\begin{lstlisting}[language=bash,literate={-}{-}1,keywords={},upquote=true]
+# Optionally add IB support and enable
+[sms](*\#*) (*\groupchrootinstall*) "InfiniBand Support"
+\end{lstlisting}
+% ohpc_indent 0
+% ohpc_command fi
+% end_ohpc_run
+
+\vspace*{-0.25cm}
+\subsubsection{Customize system configuration} \label{sec:master_customization}
+\input{common/confluent_customize}
+
+% Additional commands when additional computes are requested
+
+% begin_ohpc_run
+% ohpc_validation_newline
+% ohpc_validation_comment Update basic slurm configuration if additional computes defined
+% ohpc_validation_comment This is performed on the SMS, nodes will pick it up config file is copied there later
+% ohpc_command if [ ${num_computes} -gt 4 ];then
+% ohpc_command    perl -pi -e "s/^NodeName=(\S+)/NodeName=${compute_prefix}[1-${num_computes}]/" /etc/slurm/slurm.conf
+% ohpc_command    perl -pi -e "s/^PartitionName=normal Nodes=(\S+)/PartitionName=normal Nodes=${compute_prefix}[1-${num_computes}]/" /etc/slurm/slurm.conf
+% ohpc_command fi
+% end_ohpc_run
+
+%\clearpage
+\subsubsection{Additional Customization ({\em optional})} \label{sec:addl_customizations}
+\input{common/compute_customizations_intro}
+
+\paragraph{Increase locked memory limits}
+\input{common/memlimits_stateful}
+
+\paragraph{Enable ssh control via resource manager}
+\input{common/slurm_pam_stateful}
+
+\paragraph{Add \Lustre{} client} \label{sec:lustre_client}
+\input{common/lustre-client}
+\input{common/lustre-client-centos-stateful}
+\input{common/lustre-client-post-stateful}
+
+\vspace*{0.4cm}
+
+\paragraph{Add \clustershell{}}
+\input{common/clustershell}
+
+\paragraph{Add \genders{}}
+\input{common/genders}
+
+\paragraph{Add Magpie}
+\input{common/magpie}
+
+\paragraph{Add \conman{}} \label{sec:add_conman}
+\input{common/conman}
+
+\paragraph{Add \nhc{}} \label{sec:add_nhc}
+\input{common/nhc}
+\input{common/nhc_slurm}
+
+%\subsubsection{Identify files for synchronization} \label{sec:file_import}
+%\input{common/import_confluent_files}
+%\input{common/import_confluent_files_slurm}
+
+%%%\subsubsection{Optional kernel arguments} \label{sec:optional_kargs}
+%%%\input{common/conman_post}
+
+\section{Install \OHPC{} Development Components}
+\input{common/dev_intro.tex}
+
+%\vspace*{-0.15cm}
+%\clearpage
+\subsection{Development Tools} \label{sec:install_dev_tools}
+\input{common/dev_tools}
+
+\vspace*{-0.15cm}
+\subsection{Compilers} \label{sec:install_compilers}
+\input{common/compilers}
+
+%\clearpage
+\subsection{MPI Stacks} \label{sec:mpi}
+\input{common/mpi_slurm}
+
+\subsection{Performance Tools} \label{sec:install_perf_tools}
+\input{common/perf_tools}
+
+\subsection{Setup default development environment}
+\input{common/default_dev}
+
+%\vspace*{0.2cm}
+\subsection{3rd Party Libraries and Tools} \label{sec:3rdparty}
+\input{common/third_party_libs_intro}
+
+\input{common/third_party_libs}
+\input{common/third_party_mpi_libs_x86}
+
+\vspace*{.6cm}
+\subsection{Optional Development Tool Builds} \label{sec:3rdparty_intel}
+\input{common/oneapi_enabled_builds_slurm}
+
+\section{Resource Manager Startup} \label{sec:rms_startup}
+\input{common/slurm_startup_stateful}
+
+\section{Run a Test Job} \label{sec:test_job}
+\input{common/confluent_slurm_test_job}
+
+\clearpage
+\appendix
+{\bf \LARGE \centerline{Appendices}} \vspace*{0.2cm}
+
+\addcontentsline{toc}{section}{Appendices}
+\renewcommand{\thesubsection}{\Alph{subsection}}
+
+\input{common/automation_appendix}
+\input{common/upgrade_stateful}
+\input{common/test_suite}
+\input{common/customization_appendix_centos}
+\input{manifest}
+\input{common/signature}
+
+
+\end{document}
+
     
