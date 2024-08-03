@@ -124,33 +124,6 @@
 % ohpc_command fi
 % end_ohpc_run
 
-In addition to the \OHPC{} and \Confluent{} package repositories, the {\em master} host also
-requires access to the standard base OS distro repositories in order to resolve
-necessary dependencies. For \baseOS{}, the requirements are to have access to
-both the base OS and EPEL repositories for which mirrors are freely available online:
-
-\begin{itemize*}
-    \item Rocky-9
-    (e.g. \href{http://download.rockylinux.org/pub/rocky/9/}
-               {\color{blue}{http://download.rockylinux.org/pub/rocky/9/}} )
-  \item EPEL 9 (e.g. \href{http://download.fedoraproject.org/pub/epel/9/}
-                          {\color{blue}{http://download.fedoraproject.org/pub/epel/9/}} )
-\end{itemize*}
-
-% begin_ohpc_run
-\begin{lstlisting}[language=bash,keywords={},basicstyle=\fontencoding{T1}\fontsize{8.0}{10}\ttfamily,literate={ARCH}{\arch{}}1 {-}{-}1]
-[sms](*\#*)  (*\install*) epel-release
-\end{lstlisting}
-% end_ohpc_run
-
-Now \OHPC{} packages can be installed. To add the base package on the SMS
-issue the following
-% begin_ohpc_run
-\begin{lstlisting}[language=bash,keywords={},basicstyle=\fontencoding{T1}\fontsize{8.0}{10}\ttfamily,literate={ARCH}{\arch{}}1 {-}{-}1]
-[sms](*\#*)  (*\install*) ohpc-base
-\end{lstlisting}
-% end_ohpc_run
-
 \input{common/rocky_repos}
 \input{common/automation}
 \input{common/time}
@@ -166,30 +139,6 @@ issue the following
 
 \subsection{Optionally add \OmniPath{} support services on {\em master} node} \label{sec:add_opa}
 \input{common/opasupport_sms_centos}
-
-% begin_ohpc_run
-% ohpc_validation_newline
-% ohpc_validation_comment Verify compute nodes deployment is done
-% ohpc_validation_newline
-% ohpc_command while true; do
-% ohpc_command    deployment_pending=false
-% ohpc_command    while read line; do
-% ohpc_command        dp=$(echo $line | cut -d ":" -f 2)
-% ohpc_command        if [ "$dp" == " pending" ];  
-% ohpc_command        then
-% ohpc_command            deployment_pending=true
-% ohpc_command        fi            
-% ohpc_command done <<< `nodedeploy compute`          
-% ohpc_command if $deployment_pending;     
-% ohpc_command then 
-% ohpc_command      echo "deployment still pending"
-% ohpc_command      deployment_pending=false
-% ohpc_command      sleep 30 
-% ohpc_command else 
-% ohpc_command  break
-% ohpc_command fi
-% ohpc_command done
-% end_ohpc_run
 
 \vspace*{0.2cm}
 \subsubsection{Add \OHPC{} components} \label{sec:add_components}
