@@ -26,9 +26,9 @@
 \newcommand{\clean}{dnf clean expire-cache}
 \newcommand{\chrootclean}{dnf --installroot=\$CHROOT clean expire-cache}
 \newcommand{\install}{dnf -y install}
-\newcommand{\chrootinstall}{dnf -y --installroot=\$CHROOT install}
+\newcommand{\chrootinstall}{nodeshell compute dnf -y  install}
 \newcommand{\groupinstall}{dnf -y groupinstall}
-\newcommand{\groupchrootinstall}{dnf -y --installroot=\$CHROOT groupinstall}
+\newcommand{\groupchrootinstall}{nodeshell compute dnf -y groupinstall}
 \newcommand{\remove}{dnf -y remove}
 \newcommand{\upgrade}{dnf -y upgrade}
 \newcommand{\chrootupgrade}{dnf -y --installroot=\$CHROOT upgrade}
@@ -214,15 +214,15 @@ issue the following
 \input{common/compute_customizations_intro}
 
 \paragraph{Increase locked memory limits}
-\input{common/memlimits_stateful}
+\input{common/memlimits_confluent}
 
 \paragraph{Enable ssh control via resource manager}
-\input{common/slurm_pam_stateful}
+\input{common/slurm_pam_confluent}
 
 \paragraph{Add \Lustre{} client} \label{sec:lustre_client}
 \input{common/lustre-client}
-\input{common/lustre-client-centos-stateful}
-\input{common/lustre-client-post-stateful}
+\input{common/lustre-client-centos-confluent}
+\input{common/lustre-client-post-confluent}
 
 \vspace*{0.4cm}
 
