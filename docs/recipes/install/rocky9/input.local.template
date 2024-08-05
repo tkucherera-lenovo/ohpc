@@ -37,6 +37,12 @@ domain_name="${domain_name:-local}"
 # Path to copy of OS ISO image (xCAT recipe only)
 iso_path="${iso_path:-}"
 
+# Path to local repository web roots (Confluent recipe only)
+ohpc_repo_dir_confluent="${ohpc_repo_dir:-/var/lib/confluent/public/ohpc}"
+ohpc_repo_remote_dir="${ohpc_repo_remote_dir:-/confluent-public/ohpc}"
+epel_repo_dir_confluent="${epel_repo_dir:-/var/lib/confluent/public/epel}"
+epel_repo_remote_dir="${epel_repo_remote_dir:-/confluent-public/epel}"
+
 # Path to local repository web roots (xCAT recipe only)
 ohpc_repo_dir="${ohpc_repo_dir:-/install/ohpc}"
 epel_repo_dir="${epel_repo_dir:-/install/epel}"
