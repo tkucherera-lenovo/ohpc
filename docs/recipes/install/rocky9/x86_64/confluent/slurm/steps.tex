@@ -7,17 +7,22 @@
 \input{vc.tex}
 
 % Define Base OS and other local macros
-\newcommand{\baseOS}{Rocky 9.4}
-\newcommand{\OSRepo}{Rocky\_9.4}
-\newcommand{\OSTree}{EL\_9}
-\newcommand{\OSTag}{el9}
-\newcommand{\baseos}{rocky9.4}
-\newcommand{\baseosshort}{rocky9}
-\newcommand{\provisioner}{confluent}
-\newcommand{\provheader}{\provisioner{}}
+\newcommand{\baseOS}{CentOS8.4}
+\newcommand{\OSRepo}{CentOS\_8.4}
+\newcommand{\OSTree}{CentOS\_8}
+\newcommand{\OSTag}{el8}
+\newcommand{\baseos}{centos8.4}
+\newcommand{\baseosshort}{centos8}
+\newcommand{\provisioner}{xCAT}
+\newcommand{\provheader}{xCAT (stateful)}
 \newcommand{\rms}{SLURM}
 \newcommand{\rmsshort}{slurm}
 \newcommand{\arch}{x86\_64}
+\newcommand{\installimage}{install}
+%%% WARNING: Hack below. The version should be read from ohpc-doc.sty, but the
+%%% perl parsing script does not read that file. This works for one release, but
+%%% needs a proper fix.
+\newcommand{\VERLONG}{2.0}
 
 % Define package manager commands
 \newcommand{\pkgmgr}{dnf}
@@ -26,9 +31,9 @@
 \newcommand{\clean}{dnf clean expire-cache}
 \newcommand{\chrootclean}{dnf --installroot=\$CHROOT clean expire-cache}
 \newcommand{\install}{dnf -y install}
-\newcommand{\chrootinstall}{dnf -y --installroot=\$CHROOT install}
+\newcommand{\chrootinstall}{psh compute dnf -y install}
 \newcommand{\groupinstall}{dnf -y groupinstall}
-\newcommand{\groupchrootinstall}{dnf -y --installroot=\$CHROOT groupinstall}
+\newcommand{\groupchrootinstall}{psh compute dnf -y groupinstall}
 \newcommand{\remove}{dnf -y remove}
 \newcommand{\upgrade}{dnf -y upgrade}
 \newcommand{\chrootupgrade}{dnf -y --installroot=\$CHROOT upgrade}
@@ -40,6 +45,8 @@
 \toggletrue{isCentOS_ww_slurm_x86}
 \toggletrue{isSLURM}
 \toggletrue{isx86}
+\toggletrue{isxCAT}
+\toggletrue{isxCATstateful}
 \toggletrue{isCentOS_x86}
 
 \begin{document}
@@ -67,9 +74,9 @@
 \input{common/inputs}
 
 
-
 % Base Operating System --------------------------------------------
 
+\vspace*{0.2cm}
 \section{Install Base Operating System (BOS)}
 \input{common/bos}
 
@@ -85,30 +92,46 @@
 
 % ------------------------------------------------------------------
 
+\section{Install \xCAT{} and Provision Nodes with BOS} \label{sec:provision_compute_bos}
+\input{common/xcat_stateful_compute_bos_intro}
 
-\subsection{Enable \Confluent{} repository for local use} \label{sec:enable_confluent}
-\input{common/enable_confluent_repo}
+\subsection{Enable \xCAT{} repository for local use} \label{sec:enable_xcat}
+\input{common/enable_xcat_repo}
+
+\noindent \xCAT{} has a number of dependencies that are required for
+installation that are housed in separate public repositories for various
+distributions. To enable for local use, issue the following:
+
+% begin_ohpc_run
+\begin{lstlisting}[language=bash,keywords={},basicstyle=\fontencoding{T1}\fontsize{8.0}{10}\ttfamily,literate={ARCH}{\arch{}}1 {-}{-}1]
+[sms](*\#*) (*\install*) centos-release-stream
+[sms](*\#*) (*\addrepo*) https://xcat.org/files/xcat/repos/yum/xcat-dep/rh8/ARCH/xcat-dep.repo
+\end{lstlisting}
+% end_ohpc_run
 
 \subsection{Add provisioning services on {\em master} node} \label{sec:add_provisioning}
-\input{common/install_provisioning_confluent_intro}
+\input{common/install_provisioning_xcat_intro_stateful}
+%\input{common/enable_pxe}
 
 \vspace*{-0.15cm}
-\subsection{Complete basic \Confluent{} setup for {\em master} node} \label{sec:setup_confluent}
-\input{common/confluent_setup}
+\subsection{Complete basic \xCAT{} setup for {\em master} node} \label{sec:setup_xcat}
+\input{common/xcat_setup}
+
 
 \subsection{Define {\em compute} image for provisioning}
-\input{common/confluent_init_os_images_rocky}
+\input{common/xcat_init_os_images_centos}
 
-\vspace*{0.9cm}
-\subsection{Add compute nodes into \Confluent{} database} \label{sec:confluent_add_nodes}
-\input{common/add_confluent_hosts_intro}
+\clearpage
+\subsection{Add compute nodes into \xCAT{} database} \label{sec:xcat_add_nodes}
+\input{common/add_xcat_hosts_intro}
 
 %\vspace*{-0.25cm}
 \subsection{Boot compute nodes} \label{sec:boot_computes}
-\input{common/reset_computes_confluent}
+\input{common/reset_computes_xcat}
 
 \section{Install \OHPC{} Components} \label{sec:basic_install}
-\input{common/install_ohpc_components_intro.tex}
+\input{common/install_ohpc_components_intro}
+
 
 \subsection{Enable \OHPC{} repository for local use} \label{sec:enable_repo}
 \input{common/enable_local_ohpc_repo}
@@ -124,25 +147,58 @@
 % ohpc_command fi
 % end_ohpc_run
 
-\input{common/rocky_repos}
+
+In addition to the \OHPC{} and \xCAT{} package repositories, the {\em master} host also
+requires access to the standard base OS distro repositories in order to resolve
+necessary dependencies. For \baseOS{}, the requirements are to have access to
+both the base OS and EPEL repositories for which mirrors are freely available online:
+
+\begin{itemize*}
+\item CentOS-8 - Base 8.3.2011
+  (e.g. \href{http://mirror.centos.org/centos-8/8/BaseOS/x86\_64/os}
+             {\color{blue}{http://mirror.centos.org/centos-8/8/BaseOS/x86\_64/os}} )
+\item EPEL 8 (e.g. \href{http://download.fedoraproject.org/pub/epel/8/Everything/x86\_64}
+                        {\color{blue}{http://download.fedoraproject.org/pub/epel/8/Everything/x86\_64}} )
+\end{itemize*}
+
+\noindent The public EPEL repository is enabled by installing
+\texttt{epel-release} package. Note that this requires the CentOS Extras
+repository, which is shipped with CentOS and is enabled by default.
+
+% begin_ohpc_run
+\begin{lstlisting}[language=bash,keywords={},basicstyle=\fontencoding{T1}\fontsize{8.0}{10}\ttfamily,literate={ARCH}{\arch{}}1 {-}{-}1]
+[sms](*\#*)  (*\install*) epel-release
+\end{lstlisting}
+% end_ohpc_run
+
+Now \OHPC{} packages can be installed. To add the base package on the SMS
+issue the following
+% begin_ohpc_run
+\begin{lstlisting}[language=bash,keywords={},basicstyle=\fontencoding{T1}\fontsize{8.0}{10}\ttfamily,literate={ARCH}{\arch{}}1 {-}{-}1]
+[sms](*\#*)  (*\install*) ohpc-base
+\end{lstlisting}
+% end_ohpc_run
+
+
 \input{common/automation}
+
+
+\subsection{Setup time synchronization service on {\em master} node} \label{sec:add_ntp}
 \input{common/time}
-
-%\input{common/enable_pxe}
-
 
 \subsection{Add resource management services on {\em master} node} \label{sec:add_rm}
 \input{common/install_slurm}
 
 \subsection{Optionally add \InfiniBand{} support services on {\em master} node} \label{sec:add_ofed}
 \input{common/ibsupport_sms_centos}
-
+\vspace*{0.3cm}
 \subsection{Optionally add \OmniPath{} support services on {\em master} node} \label{sec:add_opa}
 \input{common/opasupport_sms_centos}
 
-\vspace*{0.2cm}
-\subsubsection{Add \OHPC{} components} \label{sec:add_components}
-\input{common/add_to_compute_confluent_intro}
+%\vspace*{0.5cm}
+\clearpage
+\subsubsection{Add \OHPC{} components to {\em compute} nodes} \label{sec:add_components}
+\input{common/add_to_compute_stateful_xcat_intro}
 
 %\newpage
 % begin_ohpc_run
@@ -175,7 +231,7 @@
 
 \vspace*{-0.25cm}
 \subsubsection{Customize system configuration} \label{sec:master_customization}
-\input{common/confluent_customize}
+\input{common/xcat_stateful_customize_centos}
 
 % Additional commands when additional computes are requested
 
@@ -223,8 +279,8 @@
 \input{common/nhc_slurm}
 
 %\subsubsection{Identify files for synchronization} \label{sec:file_import}
-%\input{common/import_confluent_files}
-%\input{common/import_confluent_files_slurm}
+%\input{common/import_xcat_files}
+%\input{common/import_xcat_files_slurm}
 
 %%%\subsubsection{Optional kernel arguments} \label{sec:optional_kargs}
 %%%\input{common/conman_post}
@@ -266,7 +322,7 @@
 \input{common/slurm_startup_stateful}
 
 \section{Run a Test Job} \label{sec:test_job}
-\input{common/confluent_slurm_test_job}
+\input{common/xcat_slurm_test_job}
 
 \clearpage
 \appendix
@@ -285,4 +341,3 @@
 
 \end{document}
 
-    
