@@ -5,7 +5,7 @@ specified in the BIOS.
 % begin_ohpc_run
 % ohpc_comment_header Set nodes to netboot \ref{sec:boot_computes}
 \begin{lstlisting}[language=bash,keywords={},upquote=true]
-[sms](*\#*) nodeboot compute network
+[sms](*\#*) nodesetboot compute network
 \end{lstlisting}
 % end_ohpc_run
 
@@ -19,7 +19,7 @@ desired hosts.
 % begin_ohpc_run
 % ohpc_comment_header Boot compute nodes
 \begin{lstlisting}[language=bash,keywords={},upquote=true]
-[sms](*\#*) nodepower compute reset
+[sms](*\#*) nodepower compute boot
 \end{lstlisting}
 % end_ohpc_run
 
