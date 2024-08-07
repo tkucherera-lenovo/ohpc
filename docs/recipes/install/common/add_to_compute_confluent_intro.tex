@@ -61,8 +61,8 @@ of EPEL mirror.
 [sms](*\#*) createrepo $epel_repo_dir_confluent
 
 # Setup access to the repo from the compute hosts
-[sms](*\#*) nodeshell compute dnf config-manager --add-repo=http://$sms_ip/$epel_repo_dir_confluent
-[sms](*\#*) nodeshell compute "echo gpgcheck=0 >> /etc/yum.repos.d/${sms_ip}_"${epel_repo_dir_confluent//\//"_"}.repo
+[sms](*\#*) nodeshell compute dnf config-manager --add-repo=http://$sms_ip/$epel_repo_remote_dir
+[sms](*\#*) nodeshell compute "echo gpgcheck=0 >> /etc/yum.repos.d/${sms_ip}_"${epel_repo_remote_dir//\//"_"}.repo
 \end{lstlisting}
 % end_ohpc_run
 
