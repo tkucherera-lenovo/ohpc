@@ -37,6 +37,9 @@ domain_name="${domain_name:-local}"
 # Path to copy of OS ISO image (xCAT recipe only)
 iso_path="${iso_path:-}"
 
+# Osdeployment Initialize Options 
+initialize_options="${initialize_options:-usklpta}"
+
 # Path to local repository web roots (Confluent recipe only)
 ohpc_repo_dir_confluent="${ohpc_repo_dir:-/var/lib/confluent/public/ohpc}"
 ohpc_repo_remote_dir="${ohpc_repo_remote_dir:-/confluent-public/ohpc}"
