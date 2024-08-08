@@ -10,6 +10,8 @@ service on {\em master} node
 
 # enable Confluent and its tools for use in current shell
 [sms](*\#*) systemctl enable confluent --now
+[sms](*\#*) systemctl enable httpd --now
+[sms](*\#*) systemctl enable tftp.socket --now
 [sms](*\#*) source /etc/profile.d/confluent_env.sh
 \end{lstlisting}
 % ohpc_validation_newline
