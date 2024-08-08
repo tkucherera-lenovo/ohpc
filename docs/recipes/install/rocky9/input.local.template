@@ -39,8 +39,10 @@ iso_path="${iso_path:-}"
 
 # Osdeployment Initialize Options 
 initialize_options="${initialize_options:-usklpta}"
+deployment_protocols="${deployment_protocols:-firmware}
 
-# Path to local repository web roots (Confluent recipe only)
+
+# Path to local repository web roots (Confluent reciRocky-9.4-x86_64-dvd.isope only)
 ohpc_repo_dir_confluent="${ohpc_repo_dir:-/var/lib/confluent/public/ohpc}"
 ohpc_repo_remote_dir="${ohpc_repo_remote_dir:-/confluent-public/ohpc}"
 epel_repo_dir_confluent="${epel_repo_dir:-/var/lib/confluent/public/epel}"
