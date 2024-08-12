@@ -37,9 +37,9 @@ domain_name="${domain_name:-local}"
 # Path to copy of OS ISO image (xCAT recipe only)
 iso_path="${iso_path:-}"
 
-# Osdeployment Initialize Options 
+# Osdeployment Initialize Options (Confluent recipe only)
 initialize_options="${initialize_options:-usklpta}"
-deployment_protocols="${deployment_protocols:-firmware}
+deployment_protocols="${deployment_protocols:-firmware}"
 
 
 # Path to local repository web roots (Confluent reciRocky-9.4-x86_64-dvd.isope only)
