@@ -109,11 +109,35 @@
 \subsection{Boot compute nodes} \label{sec:boot_computes}
 \input{common/reset_computes_confluent}
 
+% begin_ohpc_run
+% ohpc_validation_newline
+% ohpc_validation_comment Check if provisioning is in progress
+% ohpc_validation_newline
+% ohpc_command while true; do
+% ohpc_command    deployment_pending=false
+% ohpc_command    while read line; do
+% ohpc_command        dp=$(echo $line | cut -d ":" -f 2)
+% ohpc_command          if [ "$dp" == " pending" ];
+% ohpc_command          then
+% ohpc_command               deployment_pending=true
+% ohpc_command          fi
+% ohpc_command    done <<< `nodedeploy compute`
+% ohpc_command    if $deployment_pending;
+% ohpc_command     then
+% ohpc_command          echo "deployment still pending"
+% ohpc_command          deployment_pending=false
+% ohpc_command          sleep 30
+% ohpc_command     else
+% ohpc_command          break
+% ohpc_command     fi
+% ohpc_command done
+% end_ohpc_run
+
 \section{Install \OHPC{} Components} \label{sec:basic_install}
 \input{common/install_ohpc_components_intro}
 
 \subsection{Enable \OHPC{} repository for local use} \label{sec:enable_repo}
-\input{common/enable_local_ohpc_repo_confluent}
+\input{common/enable_ohpc_repo}
 
 % begin_ohpc_run
 % ohpc_validation_newline
