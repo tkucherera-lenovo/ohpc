@@ -117,7 +117,7 @@
 % ohpc_command    deployment_pending=false
 % ohpc_command    while read line; do
 % ohpc_command        dp=$(echo $line | cut -d ":" -f 2)
-% ohpc_command          if [ "$dp" == " pending" ];
+% ohpc_command          if [ "$dp" != " completed" ];
 % ohpc_command          then
 % ohpc_command               deployment_pending=true
 % ohpc_command          fi
@@ -126,12 +126,13 @@
 % ohpc_command     then
 % ohpc_command          echo "deployment still pending"
 % ohpc_command          deployment_pending=false
-% ohpc_command          sleep 30
+% ohpc_command          sleep 60
 % ohpc_command     else
 % ohpc_command          break
 % ohpc_command     fi
 % ohpc_command done
 % end_ohpc_run
+
 
 \section{Install \OHPC{} Components} \label{sec:basic_install}
 \input{common/install_ohpc_components_intro}
