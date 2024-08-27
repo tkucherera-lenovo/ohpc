@@ -18,10 +18,10 @@ To avoid this, we disable the online repositories:
 % ohpc_comment_header Setup nodes repositories and Install OHPC components \ref{sec:add_components}
 \begin{lstlisting}[language=bash,literate={-}{-}1,keywords={},upquote=true]
 # Install dnf-plugins-core to have dnf config-manager available
-[sms](*\#*) nodeshell compute dnf --setopt=\*.skip_if_unavailable=1 -y install dnf-plugins-core perl
+[sms](*\#*) nodeshell compute "dnf --setopt=\*.skip_if_unavailable=1 -y install dnf-plugins-core perl"
 
 # Enable CentOS-PowerTools repository
-[sms](*\#*) nodeshell compute dnf config-manager --enable crb
+[sms](*\#*) nodeshell compute "dnf config-manager --enable crb"
 \end{lstlisting}
 % end_ohpc_run
 

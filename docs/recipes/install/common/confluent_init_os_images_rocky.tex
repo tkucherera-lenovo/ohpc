@@ -39,6 +39,21 @@ Profiles:
   rocky-8.5-x86_64-default
 \end{lstlisting}
 
+If needing to copy files from the sms node to the compute nodes during deployment, this can be done by
+modifying the syncfiles file that is created when \texttt{osdeploy import} command is run. For an environment
+that has no DNS server and needs to have /etc/hosts file synced amongst all the nodes, the following command
+should be run.   
+
+% begin_ohpc_run
+% ohpc_validation_newline
+% ohpc_validation_comment Sync the hosts file in cluster
+\begin{lstlisting}[language=bash,literate={-}{-}1,keywords={},upquote=true,keepspaces,literate={BOSVER}{\baseos{}}1]
+  [sms](*\#*) echo "/etc/hosts -> /etc/hosts" >> /var/lib/confluent/public/os/rocky-9.4-x86_64-default/syncfiles
+
+\end{lstlisting}
+% end_ohpc_run
+  
+
 %The \texttt{CHROOT} environment variable highlights the path and is used by
 %subsequent commands to augment the basic installation.
 

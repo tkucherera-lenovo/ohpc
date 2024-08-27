@@ -17,15 +17,15 @@ a second private interface (refer to Figure~\ref{fig:physical_arch})
 
 \noindent \Confluent{} requires a network domain name specification for system-wide name
 resolution. This value can be set to match your local DNS schema or given a
-unique identifier such as ``local''. A default group called everything is 
-automaticallyadded to every node. It provides a method to indicate global settings.
+unique identifier such as `local`. A default group called everything is 
+automatically added to every node. It provides a method to indicate global settings.
 Attributes may all be specified on the command line, and an example set could be:
 
 % begin_ohpc_run
 % ohpc_validation_newline
 % ohpc_validation_comment Define local domainname, deployment protocol and dns 
 \begin{lstlisting}[language=bash,keywords={},upquote=true,basicstyle=\footnotesize\ttfamily,literate={BOSVER}{\baseos{}}1]
-[sms](*\#*) nodegroupattrib everything deployment.useinsecureprotocols=${deployment_protocols} dns.domain=${dns_domain} dns.servers=${dns_servers}
+[sms](*\#*) nodegroupattrib everything deployment.useinsecureprotocols=${deployment_protocols} dns.domain=${dns_domain} dns.servers=${dns_servers} net.ipv4_gateway=${sms_ip}
 \end{lstlisting}
 
 \noindent We will also define 
