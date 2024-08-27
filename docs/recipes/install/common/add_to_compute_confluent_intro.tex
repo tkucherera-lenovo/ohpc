@@ -10,59 +10,28 @@ SMS to the {\em compute} nodes.
 properly.
 
 \Confluent{} has automatically setup an  OS repository on the SMS and configured the
-nodes to use it, but it has  also enabled online OS repositories, which will
-cause  \texttt{\pkgmgr{}} failures if there is no connection to the public internet.
-To avoid this, we disable the online repositories:
+nodes to use it, but it has  also enabled online OS repositories.
+
+
+\noindent Next, we alse add the OHPC repo to the compute nodes \S\ref{sec:enable_repo}
 
 % begin_ohpc_run
 % ohpc_comment_header Setup nodes repositories and Install OHPC components \ref{sec:add_components}
 \begin{lstlisting}[language=bash,literate={-}{-}1,keywords={},upquote=true]
-# Install dnf-plugins-core to have dnf config-manager available
-[sms](*\#*) nodeshell compute "dnf --setopt=\*.skip_if_unavailable=1 -y install dnf-plugins-core perl"
-
-# Enable CentOS-PowerTools repository
-[sms](*\#*) nodeshell compute "dnf config-manager --enable crb"
-\end{lstlisting}
-% end_ohpc_run
-
-\noindent Next, the nodes are configured to use the local \OHPC{} repository
-setup in on the SMS in \S\ref{sec:enable_repo}
-
-% begin_ohpc_run
-\begin{lstlisting}[language=bash,literate={-}{-}1,keywords={},upquote=true]
-# Add OpenHPC repo mirror hosted on SMS
-[sms](*\#*) nodeshell compute dnf config-manager --add-repo=http://$sms_ip/$ohpc_repo_remote_dir/OpenHPC.local.repo
-# Replace local path with SMS URL
-[sms](*\#*) nodeshell compute "perl -pi -e 's/file:\/\/\@PATH\@/http:\/\/$sms_ip\/"${ohpc_repo_remote_dir//\//"\/"}"/s' \
-            /etc/yum.repos.d/OpenHPC.local.repo"
+# Add OpenHPC repo 
+[sms](*\#*) nodeshell compute "dnf -y install http://repos.openhpc.community/OpenHPC/3/EL_9/x86_64/ohpc-release-3-1.el9.x86_64.rpm"
 \end{lstlisting}
 % end_ohpc_run
 
 The {\em compute} nodes also need access to the EPEL repository, a required
-dependency for \OHPC{} packages. A straightforward way to accomplish this is to
-host a local mirror on the {\em master} host. However, the repository is very
-large ($>$10 GB) containing thousands of packages, while only 3 (\texttt{fping,
-libconfuse, and libunwind}) are required for packages installed this guide.  Therefore,
-here we only download the required packages and put them into a repository
-accessible to the nodes.  Users wanting to mirror the entire EPEL repository
-instead can take advantage of the \texttt{reposync} utility and should expect a
-download time of over an hour depending on their network connection and a choice
-of EPEL mirror.
+dependency for \OHPC{} packages. 
 
 % begin_ohpc_run
-% ohpc_comment_header Configure access to EPEL packages
+% ohpc_comment_header Configure access to EPEL repo
 \begin{lstlisting}[language=bash,literate={-}{-}1,keywords={},upquote=true]
-# Create directory holding EPEL packages
-[sms](*\#*) mkdir -p $epel_repo_dir_confluent
-[sms](*\#*) (*\install*) dnf-plugins-core createrepo
-# Download required EPEL packages
-[sms](*\#*) dnf download --destdir $epel_repo_dir_confluent fping libconfuse libunwind
-# Create a repository from the downloaded packages
-[sms](*\#*) createrepo $epel_repo_dir_confluent
+# Add epel repo
+[sms](*\#*) nodeshell compute "dnf -y  install epel-release"
 
-# Setup access to the repo from the compute hosts
-[sms](*\#*) nodeshell compute dnf config-manager --add-repo=http://$sms_ip/$epel_repo_remote_dir
-[sms](*\#*) nodeshell compute "echo gpgcheck=0 >> /etc/yum.repos.d/${sms_ip}_"${epel_repo_remote_dir//\//"_"}.repo
 \end{lstlisting}
 % end_ohpc_run
 
