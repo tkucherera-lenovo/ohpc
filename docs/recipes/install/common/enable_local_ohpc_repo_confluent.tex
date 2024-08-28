@@ -1,25 +1,41 @@
-\OHPC{} provides an online package repository, but here we setup and use a local
-mirror on the SMS host for \OHPC{} package installation. This is preferable for
-a stateful install, because {\em compute} nodes can access it on the local
-network.
+To begin, enable use of the \OHPC{} repository by adding it to the local list
+of available package repositories. Note that this requires network access from
+your {\em master} server to the \OHPC{} repository, or alternatively, that
+the \OHPC{} repository be mirrored locally.  In cases where network external
+connectivity is available, \OHPC{} provides an \texttt{ohpc-release} package
+that includes GPG keys for package signing and enabling the repository.  The
+example which follows illustrates installation of the \texttt{ohpc-release}
+package directly from the \OHPC{} build server.
 
-Assuming that the {\em master} has outside network access, the mirror is
-created  by downloading a tarball of the repository, unpacking it and running a
-provided script to configure the package manager.
 
 % begin_ohpc_run
 % ohpc_validation_newline
 % ohpc_comment_header Download OHPC repo and create local mirror \ref{sec:enable_repo}
+\iftoggleverb{isCentOS}
+% CentOS
 \begin{lstlisting}[language=bash,keywords={},basicstyle=\fontencoding{T1}\fontsize{7.6}{10}\ttfamily,
-	literate={VER}{\OHPCVerTree{}}1 {OSTREE}{\OSTree{}}1 {TAG}{\OSTag{}}1 {ARCH}{\arch{}}1 {-}{-}1
-        {VERLONG}{\OHPCVersion{}}1]
-# Download OHPC tarball for local installation
-[sms](*\#*) wget http://repos.openhpc.community/dist/VERLONG/OpenHPC-VERLONG.OSTREE.ARCH.tar
-# Create directory if necessary
-[sms](*\#*) mkdir -p $ohpc_repo_dir
-#Unpack
-[sms](*\#*) tar xvf OpenHPC-VERLONG.OSTREE.ARCH.tar -C $ohpc_repo_dir
-#Create local mirror repository
-[sms](*\#*) $ohpc_repo_dir/make_repo.sh
+	literate={VER}{\OHPCVerTree{}}1 {OSREPO}{\OSTree{}}1 {TAG}{\OSTag{}}1 {ARCH}{\arch{}}1 {-}{-}1]
+[sms](*\#*) dnf install http://repos.openhpc.community/OpenHPC/VER/OSREPO/ARCH/ohpc-release-VER-1.TAG.ARCH.rpm
 \end{lstlisting}
+\else
+% non-CentOS
+\begin{lstlisting}[language=bash,keywords={},basicstyle=\fontencoding{T1}\fontsize{7.8}{10}\ttfamily,
+	literate={VER}{\OHPCVerTree{}}1 {OSREPO}{\OSTree{}}1 {TAG}{\OSTag{}}1 {ARCH}{\arch{}}1 {-}{-}1]
+[sms](*\#*) rpm -ivh http://repos.openhpc.community/OpenHPC/VER/OSREPO/ARCH/ohpc-release-VER-1.TAG.ARCH.rpm
+\end{lstlisting}
+\fi
+
+\begin{center}
+\begin{tcolorbox}[]
+\small Many sites may find it useful or necessary to maintain a local copy of the
+\OHPC{} repositories. To facilitate this need, standalone tar
+archives are provided -- one containing a repository of binary packages as well as any
+available updates, and one containing a repository of source RPMS. The tar files
+also contain a simple bash script to configure the package manager to use the
+local repository after download. To use, simply unpack the tarball where you
+would like to host the local repository and execute the \texttt{make\_repo.sh} script.
+Tar files for this release can be found at \href{http://repos.openhpc.community/dist/\OHPCVersion}
+        {\color{blue}{http://repos.openhpc.community/dist/\OHPCVersion}}
+\end{tcolorbox}
+\end{center}
 % end_ohpc_run
