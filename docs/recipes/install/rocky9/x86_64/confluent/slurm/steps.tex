@@ -26,7 +26,7 @@
 \newcommand{\clean}{dnf clean expire-cache}
 \newcommand{\chrootclean}{dnf --installroot=\$CHROOT clean expire-cache}
 \newcommand{\install}{dnf -y install}
-\newcommand{\chrootinstall}{nodeshell compute dnf -y  install}
+\newcommand{\chrootinstall}{nodeshell compute dnf -y install}
 \newcommand{\groupinstall}{dnf -y groupinstall}
 \newcommand{\groupchrootinstall}{nodeshell compute dnf -y groupinstall}
 \newcommand{\remove}{dnf -y remove}
@@ -144,7 +144,7 @@
 % ohpc_validation_comment Add OpenHPC components to compute instance
 \begin{lstlisting}[language=bash,literate={-}{-}1,keywords={},upquote=true]
 # Add OpenHPC repo 
-[sms](*\#*) nodeshell compute "dnf -y install http://repos.openhpc.community/OpenHPC/3/EL_9/x86_64/ohpc-release-3-1.el9.x86_64.rpm"
+[sms](*\#*) (*\install*) http://repos.openhpc.community/OpenHPC/3/EL_9/x86_64/ohpc-release-3-1.el9.x86_64.rpm"
 \end{lstlisting}
 % end_ohpc_run
 

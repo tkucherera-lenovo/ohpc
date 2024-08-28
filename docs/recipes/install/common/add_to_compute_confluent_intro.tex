@@ -19,7 +19,7 @@ nodes to use it, but it has  also enabled online OS repositories.
 % ohpc_comment_header Setup nodes repositories and Install OHPC components \ref{sec:add_components}
 \begin{lstlisting}[language=bash,literate={-}{-}1,keywords={},upquote=true]
 # Add OpenHPC repo 
-[sms](*\#*) nodeshell compute "dnf -y install http://repos.openhpc.community/OpenHPC/3/EL_9/x86_64/ohpc-release-3-1.el9.x86_64.rpm"
+[sms](*\#*) (*\chrootinstall*) http://repos.openhpc.community/OpenHPC/3/EL_9/x86_64/ohpc-release-3-1.el9.x86_64.rpm"
 \end{lstlisting}
 % end_ohpc_run
 
