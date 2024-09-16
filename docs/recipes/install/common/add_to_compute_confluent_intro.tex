@@ -30,7 +30,7 @@ dependency for \OHPC{} packages.
 % ohpc_comment_header Configure access to EPEL repo
 \begin{lstlisting}[language=bash,literate={-}{-}1,keywords={},upquote=true]
 # Add epel repo
-[sms](*\#*) nodeshell compute "dnf -y  install epel-release"
+[sms](*\#*) (*\chrootinstall*) epel-release
 
 \end{lstlisting}
 % end_ohpc_run
