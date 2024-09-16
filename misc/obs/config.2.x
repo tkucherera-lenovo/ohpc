@@ -44,10 +44,10 @@ skip_x86  = ["-arm1"]
 
 # define compiler/MPI families: first entry in list is defined to be parent in OBS
 #compiler_families=["gnu13","intel","arm1"]
-compiler_families=["gnu13", "intel"]
+compiler_families=["gnu14", "intel"]
 mpi_families=["openmpi5","mpich","mvapich2","impi"]
 
-standalone = ["docs","test-suite"]
+standalone = ["docs","test-suite","warewulf"]
 mpi_dependent = ["cubew","otf2","cubelib","opari2","scorep","scalasca"]
 skip_on_distro_openEuler_22.03 = ["-arm1","-intel","-impi","impi-devel","intel-compilers-devel","arm-compilers-devel"]
 

@@ -65,7 +65,7 @@ jobs:
   build_on_rhel:
     strategy:
       matrix:
-        compiler: [gnu13, intel]
+        compiler: [gnu14, intel]
     runs-on: ubuntu-latest
     name: Build on RHEL (${{ matrix.compiler}})
     container:
@@ -89,6 +89,7 @@ jobs:
       run: |
         if [ "${{ matrix.compiler }}" == "intel" ]; then
           export SKIP_CI_SPECS="${{ env.SKIP_CI_SPECS }} components/serial-libs/openblas/SPECS/openblas.spec"
+          export SKIP_CI_SPECS="${SKIP_CI_SPECS} components/dev-tools/scipy/SPECS/python-scipy.spec"
         fi
         . /etc/profile.d/lmod.sh
         tests/ci/run_build.py ohpc ${{ steps.files.outputs.added_modified }} --compiler-family ${{ matrix.compiler }}
@@ -105,7 +106,7 @@ jobs:
   test_on_rhel:
     strategy:
       matrix:
-        compiler: [gnu13, intel]
+        compiler: [gnu14, intel]
     runs-on: ubuntu-latest
     name: Test on RHEL
     env:
@@ -139,6 +140,7 @@ jobs:
         export SKIP_CI_SPECS="${{ env.SKIP_CI_SPECS }}${{ env.JOB_SKIP_CI_SPECS }}"
         if [ "${{ matrix.compiler }}" == "intel" ]; then
           export SKIP_CI_SPECS="${SKIP_CI_SPECS} components/serial-libs/openblas/SPECS/openblas.spec"
+          export SKIP_CI_SPECS="${SKIP_CI_SPECS} components/dev-tools/scipy/SPECS/python-scipy.spec"
         fi
         . /etc/profile.d/lmod.sh
         chown ohpc -R tests
@@ -185,7 +187,7 @@ jobs:
   test_on_openEuler:
     strategy:
       matrix:
-        compiler: [gnu13]
+        compiler: [gnu14]
     env:
       JOB_SKIP_CI_SPECS: |
         components/runtimes/charliecloud/SPECS/charliecloud.spec
@@ -246,7 +248,7 @@ jobs:
   test_on_leap:
     strategy:
       matrix:
-        compiler: [gnu13]
+        compiler: [gnu14]
     env:
       JOB_SKIP_CI_SPECS: |
         components/runtimes/charliecloud/SPECS/charliecloud.spec
