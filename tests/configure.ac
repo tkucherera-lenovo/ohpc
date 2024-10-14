@@ -4,7 +4,7 @@
 AC_PREREQ([2.69])
 AC_INIT([test-suite], [2.0.0], [https://github.com/openhpc/ohpc])
 AC_CONFIG_MACRO_DIR([m4])
-AM_INIT_AUTOMAKE([1.14])
+AM_INIT_AUTOMAKE([1.14 -Wno-portability])
 m4_ifdef([AM_SILENT_RULES], [AM_SILENT_RULES([yes])])
 
 OHPC_DISTRO_FAMILY
@@ -58,12 +58,12 @@ AC_ARG_ENABLE([psxe],
 # Default MPI families to test
 if test x$enable_psxe = xyes ;then
    AC_MSG_RESULT([yes])
-   AC_SUBST(COMPILER_FAMILIES,["gnu13 intel"])
+   AC_SUBST(COMPILER_FAMILIES,["gnu14 intel"])
    AC_SUBST(MPI_FAMILIES,["mpich mvapich2 openmpi5 impi"])
    AC_SUBST(PYTHON_FAMILIES,["python3"])
 else
    AC_MSG_RESULT([no])
-   AC_SUBST(COMPILER_FAMILIES,["gnu13"])
+   AC_SUBST(COMPILER_FAMILIES,["gnu14"])
    AC_SUBST(MPI_FAMILIES,["mpich mvapich2 openmpi5"])
    AC_SUBST(PYTHON_FAMILIES,["python3"])
 fi

@@ -2,8 +2,8 @@
 # Process this file with autoconf to produce a configure script.
 #
 
-AC_PREREQ(2.59)
-AC_INIT(tau, 0.10.0, https://github.com/openhpc/ohpc)
+AC_PREREQ([2.71])
+AC_INIT([tau],[0.10.0],[https://github.com/openhpc/ohpc])
 AC_CONFIG_MACRO_DIR([m4])
 AM_INIT_AUTOMAKE([foreign])
 m4_ifdef([AM_SILENT_RULES], [AM_SILENT_RULES([yes])])
@@ -15,7 +15,7 @@ AC_MSG_CHECKING([for TAU_LIB environment variable])
 if test "x$TAU_LIB" = "x"; then
    AC_MSG_RESULT([no])
    echo
-   AC_ERROR([TAU_LIB not defined - please load tau environment.])
+   AC_MSG_ERROR(TAU_LIB not defined - please load tau environment.)
 else
    AC_MSG_RESULT([yes])
 fi
@@ -24,7 +24,7 @@ AC_MSG_CHECKING([for TAU_INC environment variable])
 if test "x$TAU_INC" = "x"; then
    AC_MSG_RESULT([no])
    echo
-   AC_ERROR([TAU_INC not defined - please load tau environment.])
+   AC_MSG_ERROR(TAU_INC not defined - please load tau environment.)
 else
    AC_MSG_RESULT([yes])
 fi
@@ -33,7 +33,7 @@ AC_MSG_CHECKING([for TAU_MAKEFILE environment variable])
 if test "x$TAU_MAKEFILE" = "x"; then
    AC_MSG_RESULT([no])
    echo
-   AC_ERROR([TAU_MAKEFILE not defined - please load tau environment.])
+   AC_MSG_ERROR(TAU_MAKEFILE not defined - please load tau environment.)
 else
    AC_MSG_RESULT([yes])
 fi
@@ -41,6 +41,7 @@ fi
 # set compilers to use Tau wrappers
 
 OHPC_COMPILER_FAMILY
+OHPC_DISTRO_FAMILY
 
 CC=tau_cc.sh
 CXX=tau_cxx.sh
@@ -65,8 +66,8 @@ AC_C_CONST
 # Define include path and library linkage from environment variables
 # which should be provided via module loads.
 
-CFLAGS="-I${TAU_INC} ${CFLAGS} -fopenmp"
-CXXFLAGS="-I${TAU_INC} ${CXXFLAGS} -fopenmp"
+CFLAGS="-I${TAU_INC} ${CFLAGS}"
+CXXFLAGS="-I${TAU_INC} ${CXXFLAGS}"
 FCFLAGS="-I${TAU_INC} ${FCLAGS}"
 FFLAGS="-I${TAU_INC} ${FCLAGS}"
 LDFLAGS="-L${TAU_LIB} -lTAU ${LDFLAGS}"
@@ -78,13 +79,22 @@ if test "x$LMOD_FAMILY_COMPILER" = "xintel" ; then
    if test "x$LMOD_FAMILY_MPI" = "xmvapich2" ;then
       LDFLAGS="$LDFLAGS -lfmpich"
    fi
+   CFLAGS="${CFLAGS} -qopenmp"
+   CXXFLAGS="${CXXFLAGS} -qopenmp"
+else
+   CFLAGS="${CFLAGS} -fopenmp"
+   CXXFLAGS="${CXXFLAGS} -fopenmp"
+fi
+
+if test "x$DISTRO_FAMILY" = "xSLES" ; then
+   LDFLAGS="$LDFLAGS -lsframe"
 fi
 
 # Set subdirectories
 AC_CONFIG_FILES(Makefile tests/Makefile)
 
 # Configure
-AC_OUTPUT()
+AC_OUTPUT
 
 echo
 echo '-------------------------------------------------- SUMMARY --------------------------------------------------'

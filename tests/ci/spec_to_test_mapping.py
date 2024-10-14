@@ -4,8 +4,9 @@
 # and which tests to enable in the test suite.
 # This script will return three shell arrays (TESTS, ADMIN_TESTS and PKGS).
 
-import os
 import sys
+import csv
+import os
 
 # This dictionary defines the mapping
 # 'path/to/file.spec': [
@@ -42,11 +43,11 @@ test_map = {
     'components/io-libs/adios2/SPECS/adios2.spec': [
         'adios2',
         '',
-        'openmpi5-gnu13-ohpc \
-            mpich-gnu13-ohpc \
-            python3-numpy-gnu13-ohpc \
-            python3-mpi4py-gnu13-mpich-ohpc \
-            python3-mpi4py-gnu13-openmpi5-ohpc'
+        'openmpi5-gnu14-ohpc \
+            mpich-gnu14-ohpc \
+            python3-numpy-gnu14-ohpc \
+            python3-mpi4py-gnu14-mpich-ohpc \
+            python3-mpi4py-gnu14-openmpi5-ohpc'
     ],
     'components/io-libs/hdf5/SPECS/hdf5.spec': [
         'hdf5',
@@ -126,7 +127,7 @@ test_map = {
     'components/parallel-libs/superlu_dist/SPECS/superlu_dist.spec': [
         'superlu_dist',
         '',
-        'scalapack-gnu13-openmpi5-ohpc scalapack-gnu13-mpich-ohpc'
+        'scalapack-gnu14-openmpi5-ohpc scalapack-gnu14-mpich-ohpc'
     ],
     'components/parallel-libs/trilinos/SPECS/trilinos.spec': [
         'trilinos',
@@ -136,17 +137,17 @@ test_map = {
     'components/perf-tools/extrae/SPECS/extrae.spec': [
         'extrae',
         '',
-        'lmod-defaults-gnu13-openmpi5-ohpc'
+        'lmod-defaults-gnu14-openmpi5-ohpc'
     ],
     'components/perf-tools/geopm/SPECS/geopm.spec': [
         'geopm',
         '',
-        'lmod-defaults-gnu13-openmpi5-ohpc'
+        'lmod-defaults-gnu14-openmpi5-ohpc'
     ],
     'components/perf-tools/likwid/SPECS/likwid.spec': [
         'likwid',
         '',
-        'lmod-defaults-gnu13-openmpi5-ohpc'
+        'lmod-defaults-gnu14-openmpi5-ohpc'
     ],
     'components/perf-tools/papi/SPECS/papi.spec': [
         'papi',
@@ -156,17 +157,17 @@ test_map = {
     'components/perf-tools/scorep/SPECS/scorep.spec': [
         'scorep',
         '',
-        'lmod-defaults-gnu13-openmpi5-ohpc'
+        'lmod-defaults-gnu14-openmpi5-ohpc'
     ],
     'components/perf-tools/scalasca/SPECS/scalasca.spec': [
         'scalasca',
         '',
-        'lmod-defaults-gnu13-openmpi5-ohpc'
+        'lmod-defaults-gnu14-openmpi5-ohpc'
     ],
     'components/perf-tools/tau/SPECS/tau.spec': [
         'tau',
         '',
-        'lmod-defaults-gnu13-openmpi5-ohpc man bc'
+        'lmod-defaults-gnu14-openmpi5-ohpc man bc'
     ],
     'components/mpi-families/openmpi/SPECS/openmpi5.spec': [
         'slurm',
@@ -216,7 +217,7 @@ test_map = {
     'components/perf-tools/dimemas/SPECS/dimemas.spec': [
         'dimemas',
         '',
-        'lmod-defaults-gnu13-openmpi5-ohpc'
+        'lmod-defaults-gnu14-openmpi5-ohpc'
     ],
     'components/runtimes/charliecloud/SPECS/charliecloud.spec': [
         'charliecloud',
@@ -226,12 +227,12 @@ test_map = {
     'components/io-libs/netcdf-fortran/SPECS/netcdf-fortran.spec': [
         'netcdf',
         '',
-        'netcdf-cxx-gnu13-openmpi5-ohpc netcdf-cxx-gnu13-mpich-ohpc'
+        'netcdf-cxx-gnu14-openmpi5-ohpc netcdf-cxx-gnu14-mpich-ohpc'
     ],
     'components/io-libs/netcdf-cxx/SPECS/netcdf-cxx.spec': [
         'netcdf',
         '',
-        'netcdf-fortran-gnu13-openmpi5-ohpc netcdf-fortran-gnu13-mpich-ohpc'
+        'netcdf-fortran-gnu14-openmpi5-ohpc netcdf-fortran-gnu14-mpich-ohpc'
     ],
     'components/perf-tools/imb/SPECS/imb.spec': [
         'imb',
@@ -253,7 +254,28 @@ test_map = {
         '',
         ''
     ],
+    'components/dev-tools/valgrind/SPECS/valgrind.spec': [
+        'valgrind',
+        '',
+        '',
+    ],
 }
+
+# Check which base OS we are using
+reader = csv.DictReader(open('/etc/os-release'), delimiter="=")
+
+python_prefix = 'python3'
+
+for row in reader:
+    key = row.pop('NAME')
+    if key in ['ID_LIKE', 'ID']:
+        for item in list(row.items())[0]:
+            if 'rhel' in item:
+                python_prefix = 'python3.11'
+                break
+            if 'suse' in item:
+                python_prefix = 'python311'
+                break
 
 skip_ci_specs = []
 skip_ci_specs_env = os.getenv('SKIP_CI_SPECS')
@@ -285,6 +307,8 @@ for i in sys.argv[1:]:
         if len(test_map[i][1]) > 0:
             admin_tests += f'--enable-{test_map[i][1]}'
         pkgs += test_map[i][2]
+
+pkgs = pkgs.replace('python3', python_prefix)
 
 print(
     'TESTS=(%s) ADMIN_TESTS=(%s) PKGS=(%s)' % (

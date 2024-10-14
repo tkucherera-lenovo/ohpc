@@ -30,6 +30,7 @@ Source0:   https://perftools.pages.jsc.fz-juelich.de/cicd/scorep/tags/scorep-%{v
 %if 0%{?suse_version}
 Patch1:    scorep-8.4-opensuse-libbfd-additional-libs.patch
 %endif
+Patch2:    scorep-8.4-gcc-update-fake-gmp-header.patch
 
 BuildRequires: automake
 BuildRequires: bison
@@ -76,6 +77,7 @@ This is the %{compiler_family}-%{mpi_family} version.
 %if 0%{?suse_version}
 %patch -P 1 -p1
 %endif
+%patch -P 2 -p1
 
 %build
 
@@ -151,14 +153,14 @@ make V=1 %{?_smp_mflags}
 # GNU compilers bring their own libstdc++, which is required for C++
 # code to work correctly. Due to rpathing issues however, Score-P
 # causes the wrong libstdc++ to be linked (the system one instead of
-# the gnu13 installation). This causes issues when running code.
+# the gnu14 installation). This causes issues when running code.
 # This will be fixed in Score-P v9.0. Until then, fix the paths
 # manually be replacing the added /usr/lib64 and /lib64 library paths
-# by the gnu13 ones. We need to do this after make, since it is
+# by the gnu14 ones. We need to do this after make, since it is
 # generated during the build process.
-%if "%{compiler_family}" == "gnu13"
-%{__sed} -i -e 's#"/lib64"#"/opt/ohpc/pub/compiler/gcc/13.2.0/lib64"#g' src/scorep_config_library_dependencies_backend_inc.hpp
-%{__sed} -i -e 's#"/usr/lib64"#"/opt/ohpc/pub/compiler/gcc/13.2.0/lib/../lib64"#g' src/scorep_config_library_dependencies_backend_inc.hpp
+%if "%{compiler_family}" == "gnu14"
+%{__sed} -i -e 's#"/lib64"#"/opt/ohpc/pub/compiler/gcc/14.2.0/lib64"#g' src/scorep_config_library_dependencies_backend_inc.hpp
+%{__sed} -i -e 's#"/usr/lib64"#"/opt/ohpc/pub/compiler/gcc/14.2.0/lib/../lib64"#g' src/scorep_config_library_dependencies_backend_inc.hpp
 make V=1 %{?_smp_mflags}
 %endif
 
