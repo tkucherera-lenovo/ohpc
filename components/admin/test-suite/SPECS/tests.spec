@@ -17,9 +17,11 @@ Release:   1
 License:   Apache-2.0
 Group:     %{PROJ_NAME}/admin
 BuildArch: noarch
-URL:       https://github.com/openhpc/ohpc/tests
+URL:       https://github.com/openhpc/ohpc
 Source0:   tests-ohpc.tar
 
+BuildRequires:  perl(File::Copy)
+BuildRequires:  perl(File::Compare)
 BuildRequires:  autoconf%{PROJ_DELIM}
 BuildRequires:  automake%{PROJ_DELIM}
 
